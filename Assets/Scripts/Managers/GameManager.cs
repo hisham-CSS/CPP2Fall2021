@@ -33,4 +33,9 @@ public class GameManager : Singleton<GameManager>
     #endif
     }
 
+    public void GoToEndScene()
+    {
+        SceneManager.LoadScene("SampleScene");
+    }
+
 }

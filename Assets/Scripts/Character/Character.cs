@@ -141,4 +141,15 @@ public class Character : MonoBehaviour
     {
         speed = 6.0f;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "EndLevel")
+            GameManager.Instance.GoToEndScene();
+    }
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.tag == "EndLevel")
+            GameManager.Instance.GoToEndScene();
+    }
 }
