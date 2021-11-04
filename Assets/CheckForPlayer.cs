@@ -19,7 +19,6 @@ public class CheckForPlayer : MonoBehaviour
         RaycastHit hit;
         Vector3 offsetOnY = transform.position;
         offsetOnY.y += 2f;
-
         if (Physics.Raycast(offsetOnY, Vector3.forward, out hit, sightDistance))
         {
             if (hit.transform.gameObject.tag == "Player")

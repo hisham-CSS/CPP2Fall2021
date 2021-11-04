@@ -8,6 +8,9 @@ public class Character : MonoBehaviour
 {
     CharacterController controller;
 
+    public GameObject characterObject;
+    Animator anim;
+
     [Header("Player Settings")]
     [Space(10)]
     [Tooltip("Speed value between 1 and 6")]
@@ -21,12 +24,8 @@ public class Character : MonoBehaviour
     [SerializeField] ControllerType type;
 
     Vector3 moveDirection;
-
-    [Header("Weapon Settings")]
-    [Space(10)]
-    public float projectileForce;
-    public Rigidbody projectilePrefab;
-    public Transform projectileSpawnPoint;
+    public bool canMove = true;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -59,18 +58,16 @@ public class Character : MonoBehaviour
 
             moveDirection = Vector3.zero;
 
-            if (projectileForce <= 0)
-            {
-                projectileForce = 10.0f;
 
-                Debug.Log("ProjectileForce not set on " + name + " defaulting to " + projectileForce);
+            if (!characterObject)
+                Debug.LogWarning("Missing character object on " + name);
+            else
+            {
+                anim = characterObject.GetComponent<Animator>();
+                if (!anim)
+                    Debug.LogWarning("Missing animator on " + characterObject.name);
             }
 
-            if (!projectilePrefab)
-                Debug.LogWarning("Missing projectilePrefab on " + name);
-
-            if (!projectileSpawnPoint)
-                Debug.LogWarning("Missing projectileSpawnPoint on " + name);
 
         }
         catch (NullReferenceException e)
@@ -86,9 +83,6 @@ public class Character : MonoBehaviour
             Debug.LogWarning("Always Get Called");
         }
 
-        if (projectileForce <= 0)
-            projectileForce = 10.0f;
-
 
     }
 
@@ -103,7 +97,7 @@ public class Character : MonoBehaviour
                 break;
             case ControllerType.Move:
 
-                if (controller.isGrounded)
+                if (controller.isGrounded && canMove)
                 {
                     moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
                     moveDirection *= speed;
@@ -120,21 +114,23 @@ public class Character : MonoBehaviour
         }
 
         if (Input.GetButtonDown("Fire1"))
-            Fire();
-    }
-
-    void Fire()
-    {
-        if (projectilePrefab && projectileSpawnPoint)
         {
-            Rigidbody temp = Instantiate(projectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
-
-            temp.AddForce(projectileSpawnPoint.forward * projectileForce, ForceMode.Impulse);
-
-            Destroy(temp.gameObject, 2.0f);
-
+            anim.SetTrigger("Attack");
+            canMove = false;
+            moveDirection = Vector3.zero;
         }
-    }    
+        //Fire();
+
+        if (Input.GetButtonDown("Fire2"))
+        {
+            anim.SetTrigger("Die");
+            canMove = false;
+            moveDirection = Vector3.zero;
+        }
+
+        anim.SetBool("isGrounded", controller.isGrounded);
+        anim.SetFloat("Speed", transform.InverseTransformDirection(controller.velocity).z);
+    } 
 
     [ContextMenu("Reset Stats")]
     void ResetStats()
