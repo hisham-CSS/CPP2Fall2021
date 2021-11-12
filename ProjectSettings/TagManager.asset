@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - EndLevel
+  - PatrolNode
   layers:
   - Default
   - TransparentFX

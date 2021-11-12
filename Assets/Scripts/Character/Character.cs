@@ -7,9 +7,12 @@ using System;
 public class Character : MonoBehaviour
 {
     CharacterController controller;
+    float health = 100;
 
     public GameObject characterObject;
     Animator anim;
+
+
 
     [Header("Player Settings")]
     [Space(10)]
@@ -148,4 +151,24 @@ public class Character : MonoBehaviour
         if (hit.gameObject.tag == "EndLevel")
             GameManager.Instance.GoToEndScene();
     }
+
+
+    public float Health
+    {
+        get { return health; }
+        set
+        {
+            health = value;
+            //if (health <= 0)
+                //Call gameover here
+        }
+    }
+
+    public void ChangeHealth(float value)
+    {
+        Health += value;
+
+        Debug.Log("Health changed to " + Health);
+    }
+
 }
