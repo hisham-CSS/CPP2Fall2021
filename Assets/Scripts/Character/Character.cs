@@ -21,14 +21,20 @@ public class Character : MonoBehaviour
     public float speed = 6;
     public float gravity = 9.81f;
     public float jumpSpeed = 10.0f;
-    
-    
+
+
     enum ControllerType { SimpleMove, Move }
     [SerializeField] ControllerType type;
 
     Vector3 moveDirection;
     public bool canMove = true;
-    
+
+    public bool godModeActive = false;
+    public float godModeTimer = 3.0f;
+
+    public float jumpMultipler = 2.0f;
+    public float jumpModeTimer = 3.0f;
+
 
     // Start is called before the first frame update
     void Start()
@@ -133,7 +139,7 @@ public class Character : MonoBehaviour
 
         anim.SetBool("isGrounded", controller.isGrounded);
         anim.SetFloat("Speed", transform.InverseTransformDirection(controller.velocity).z);
-    } 
+    }
 
     [ContextMenu("Reset Stats")]
     void ResetStats()
@@ -145,11 +151,35 @@ public class Character : MonoBehaviour
     {
         if (other.gameObject.tag == "EndLevel")
             GameManager.Instance.GoToEndScene();
+
+        if (other.gameObject.CompareTag("Pickup_GodMode"))
+        {
+            Destroy(other.gameObject);
+            godModeActive = true;
+            StartCoroutine(StopGodMode());
+        }
+
+        if (other.gameObject.CompareTag("Pickup_SuperJump"))
+        {
+            Destroy(other.gameObject);
+            jumpSpeed *= jumpMultipler;
+            StartCoroutine(StopJumpMode());
+        }
+
     }
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (hit.gameObject.tag == "EndLevel")
             GameManager.Instance.GoToEndScene();
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("HealingPond"))
+        {
+            //starting healing every tick
+            Debug.Log("Staying in healing pond");
+        }
     }
 
 
@@ -158,17 +188,35 @@ public class Character : MonoBehaviour
         get { return health; }
         set
         {
+            if (godModeActive)
+                return;
+
             health = value;
             //if (health <= 0)
-                //Call gameover here
+            //Call gameover here
         }
     }
 
     public void ChangeHealth(float value)
     {
+
         Health += value;
 
         Debug.Log("Health changed to " + Health);
+    }
+
+    IEnumerator StopGodMode()
+    {
+        yield return new WaitForSeconds(godModeTimer);
+
+        godModeActive = false;
+    }
+
+    IEnumerator StopJumpMode()
+    {
+        yield return new WaitForSeconds(godModeTimer);
+
+        jumpSpeed /= jumpMultipler;
     }
 
 }

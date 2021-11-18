@@ -6,6 +6,10 @@ TagManager:
   tags:
   - EndLevel
   - PatrolNode
+  - Weapon
+  - HealingPond
+  - Pickup_GodMode
+  - Pickup_SuperJump
   layers:
   - Default
   - TransparentFX
