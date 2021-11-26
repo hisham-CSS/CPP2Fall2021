@@ -5,6 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
+    // C# property to retrieve save/load manager
+    public static LoadSaveManager SaveManager
+    {
+        get
+        {
+            if (!saveManager)
+                saveManager = Instance.GetComponent<LoadSaveManager>();
+
+            return saveManager;
+        }
+    }
+
+    private static LoadSaveManager saveManager = null;
 
     // Start is called before the first frame update
     void Start()
